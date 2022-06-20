@@ -6,6 +6,7 @@ public class CommonRenderFeature : ScriptableRendererFeature
 {
 
     public Shader UsedShader;
+    public Material m_material;
     public RenderPassEvent PassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     CommonPass m_ScriptablePass;
 
@@ -13,11 +14,13 @@ public class CommonRenderFeature : ScriptableRendererFeature
     {
         Material m_material;
         RenderTargetIdentifier source;
-        RenderTargetIdentifier dst;
-        RenderTargetHandle m_temporaryColorTexture;
+        RenderTargetHandle m_TemporaryColorTexture;
+        static readonly ProfilingSampler m_ProfilingSampler = new ProfilingSampler("Test Pass");
+        RenderTexture m_TempRT;
 
         public CommonPass(Material mat)
         {
+            base.profilingSampler = new ProfilingSampler(nameof(CommonPass));
             m_material = mat;
         }
 
@@ -34,11 +37,14 @@ public class CommonRenderFeature : ScriptableRendererFeature
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get();
-            var opaqueDesc = renderingData.cameraData.cameraTargetDescriptor;
-            opaqueDesc.depthBufferBits = 0;
-            //    cmd.GetTemporaryRT(m_renderTargetHandle.id, opaqueDesc, FilterMode.Point);
-            Blit(cmd, source, m_temporaryColorTexture.Identifier(), m_material);
-            Blit(cmd, m_temporaryColorTexture.Identifier(), source);
+            var camera = renderingData.cameraData.camera;
+            using (new ProfilingScope(cmd, m_ProfilingSampler))
+            {
+                cmd.GetTemporaryRT(m_TemporaryColorTexture.id, renderingData.cameraData.cameraTargetDescriptor, FilterMode.Bilinear);
+              //  m_TempRT = RenderTexture.GetTemporary(camera.pixelWidth, camera.pixelHeight, 0, RenderTextureFormat.RGB111110Float);
+                cmd.Blit(source, m_TemporaryColorTexture.Identifier(), m_material);
+                cmd.Blit(m_TemporaryColorTexture.Identifier(), source);
+            }
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
@@ -51,19 +57,18 @@ public class CommonRenderFeature : ScriptableRendererFeature
 
     public override void Create()
     {
-        if (UsedShader == null) return;
-        var mat = new Material(UsedShader);
-        m_ScriptablePass = new CommonPass(mat);
-        m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
+        if (m_material == null) return;
+        m_ScriptablePass = new CommonPass(m_material);
+        m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        // if (renderingData.cameraData.isSceneViewCamera) return;
-        //if (mat!=null)
+        var dest = RenderTargetHandle.CameraTarget;
         var src = renderer.cameraColorTarget;
         m_ScriptablePass.Setup(src);
         renderer.EnqueuePass(m_ScriptablePass);
+
     }
 }
 

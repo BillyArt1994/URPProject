@@ -16,6 +16,7 @@
         Tags { "RenderPipeline" = "UniversalPipeline" }
 
         HLSLINCLUDE
+   //     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
         CBUFFER_START(UnityPerMaterial)

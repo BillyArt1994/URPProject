@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: URP_URPShader
-  m_Shader: {fileID: 4800000, guid: 133287d319bf2074ca5aca0444123bf3, type: 3}
+  m_Name: Mya_TestShader
+  m_Shader: {fileID: 4800000, guid: cea822d1ea2654143b2195a3dea13de5, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -20,15 +20,25 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _MainTex:
+    - _MainTex1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Gloss: 112
-    - _Test: 0
-    - _Value: 0
+    - _Float1: 0
+    - _Float2: 0
+    - _FoldoutBlend: 1
+    - _FoldoutWaveBlend: 1
+    - _Range1: 0
+    - _Range2: 0
     m_Colors:
-    - _Color: {r: 0.015686274, g: 0.68701, b: 1, a: 1}
+    - _Color1: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 1, g: 0, b: 0, a: 1}
+    - _VetorVal1: {r: 0, g: 0, b: 0, a: 0}
+    - _VetorVal2: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
